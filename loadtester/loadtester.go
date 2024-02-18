@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NayronFerreira/stress_test_challenge/constants"
 	"github.com/NayronFerreira/stress_test_challenge/models"
-	"github.com/NayronFerreira/stress_test_challenge/report/constants"
 )
 
 func RunLoadTest(url string, totalRequests, concurrency int) models.TotalResult {

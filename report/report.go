@@ -6,8 +6,8 @@ import (
 	"math"
 	"net/http"
 
+	"github.com/NayronFerreira/stress_test_challenge/constants"
 	"github.com/NayronFerreira/stress_test_challenge/models"
-	"github.com/NayronFerreira/stress_test_challenge/report/constants"
 )
 
 func GenerateReport(totalResult models.TotalResult) {
