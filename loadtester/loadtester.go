@@ -83,6 +83,7 @@ func performRequest(client *http.Client, url string) Result {
 	}
 	if err != nil {
 		result.Error = true
+		result.StatusCode = http.StatusInternalServerError
 		result.ErrorMessage = err.Error()
 	} else {
 		defer resp.Body.Close()
