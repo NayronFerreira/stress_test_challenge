@@ -2,6 +2,7 @@ package report
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/NayronFerreira/stress_test_challenge/loadtester"
 )
@@ -11,7 +12,7 @@ func GenerateReport(totalResult loadtester.TotalResult) {
 	successCount := 0
 	errorCount := 0
 	statusDistribution := make(map[int]int)
-	minDuration := 500.0 // Isso pode ser problemático se todos os tempos forem maiores que 500
+	minDuration := math.MaxFloat64
 	var maxDuration float64
 
 	for _, result := range totalResult.Results {
@@ -19,6 +20,7 @@ func GenerateReport(totalResult loadtester.TotalResult) {
 		if result.Error {
 			errorCount++
 			fmt.Printf("Error count: %d - Falha ao executar requisição: %s \n ", errorCount, result.ErrorMessage)
+			fmt.Println("--------------------------------------------------------------------------------------------------------------")
 
 		} else {
 			if result.StatusCode == 200 {
@@ -26,7 +28,7 @@ func GenerateReport(totalResult loadtester.TotalResult) {
 			}
 		}
 
-		if result.Duration < minDuration || minDuration == 500.0 {
+		if result.Duration < minDuration {
 			minDuration = result.Duration
 		}
 
