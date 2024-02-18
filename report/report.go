@@ -15,8 +15,11 @@ func GenerateReport(totalResult loadtester.TotalResult) {
 	var maxDuration float64
 
 	for _, result := range totalResult.Results {
+
 		if result.Error {
 			errorCount++
+			fmt.Printf("Error count: %d - Falha ao executar requisição: %s \n ", errorCount, result.ErrorMessage)
+
 		} else {
 			if result.StatusCode == 200 {
 				successCount++
@@ -35,9 +38,9 @@ func GenerateReport(totalResult loadtester.TotalResult) {
 	}
 
 	fmt.Println("=========================================")
-	fmt.Println("           RELATÓRIO DE TESTE DE CARGA")
+	fmt.Println("     RELATÓRIO DE TESTE DE CARGA")
 	fmt.Println("=========================================")
-	fmt.Printf("URL Testada: %s\n", totalResult.URL) // Supondo que URL seja parte de TotalResult
+	fmt.Printf("URL Testada: %s\n", totalResult.URL)
 	fmt.Printf("Total de Requisições: %d\n", totalRequests)
 	fmt.Printf("Requisições Bem-Sucedidas (200 OK): %d\n", successCount)
 	fmt.Printf("Requisições com Erros: %d\n", errorCount)

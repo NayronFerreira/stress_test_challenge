@@ -25,19 +25,16 @@ func RunLoadTest(url string, totalRequests, concurrency int) TotalResult {
 	results := make([]Result, 0, totalRequests)
 	resultChan := make(chan Result, totalRequests)
 
-	var wg sync.WaitGroup
-
-	// Definir um timeout para cada requisição
 	requestTimeout := 10 * time.Second
 
-	// Criar um client HTTP com timeout
 	client := &http.Client{
 		Timeout: requestTimeout,
 	}
 
+	var wg sync.WaitGroup
+
 	totalStartTime := time.Now()
 
-	// Usar um semáforo para limitar a concorrência
 	semaphore := make(chan struct{}, concurrency)
 
 	for i := 0; i < totalRequests; i++ {
@@ -46,9 +43,8 @@ func RunLoadTest(url string, totalRequests, concurrency int) TotalResult {
 			defer wg.Done()
 			semaphore <- struct{}{} // Adquire
 
-			// Criar um contexto com timeout para esta requisição
 			ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-			defer cancel() // Importante para evitar vazamentos de recursos
+			defer cancel()
 
 			startTime := time.Now()
 			req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -65,22 +61,23 @@ func RunLoadTest(url string, totalRequests, concurrency int) TotalResult {
 			result := Result{
 				Duration: float64(duration),
 			}
-
-			if err != nil || resp.StatusCode != http.StatusOK {
-				result.StatusCode = resp.StatusCode
+			if err != nil {
 				result.Error = true
-				if err != nil {
-					result.ErrorMessage = err.Error()
-				} else {
-					resBody, _ := io.ReadAll(resp.Body)
-					bodyMessage := string(resBody)
-					result.ErrorMessage = bodyMessage
-					resp.Body.Close()
-				}
-
+				result.ErrorMessage = err.Error()
 			} else {
+				defer resp.Body.Close()
 				result.StatusCode = resp.StatusCode
-				resp.Body.Close()
+				result.Duration = float64(duration)
+
+				if resp.StatusCode != http.StatusOK {
+					result.Error = true
+					resBody, err := io.ReadAll(resp.Body)
+					if err == nil {
+						result.ErrorMessage = string(resBody)
+					} else {
+						result.ErrorMessage = "Erro ao ler o corpo da resposta"
+					}
+				}
 			}
 
 			resultChan <- result
