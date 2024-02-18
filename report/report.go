@@ -25,7 +25,6 @@ func calculateStats(totalResult models.TotalResult) models.ReportStats {
 	for _, result := range totalResult.Results {
 		if result.Error {
 			stats.ErrorCount++
-			fmt.Println(constants.ReportFooter)
 			log.Printf("Error count: %d - Falha ao executar requisição: %s \n ", stats.ErrorCount, result.ErrorMessage)
 
 		} else {

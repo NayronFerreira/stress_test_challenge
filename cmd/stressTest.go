@@ -26,8 +26,9 @@ to quickly create a Cobra application.`,
 		url, _ := cmd.Flags().GetString("url")
 		requests, _ := cmd.Flags().GetInt("requests")
 		concurrency, _ := cmd.Flags().GetInt("concurrency")
+		header, _ := cmd.Flags().GetStringSlice("header")
 
-		result := loadtester.RunLoadTest(url, requests, concurrency)
+		result := loadtester.RunLoadTest(url, requests, concurrency, header)
 
 		fmt.Printf("Teste de carga concluído para %s\n", url)
 
@@ -38,6 +39,7 @@ to quickly create a Cobra application.`,
 func init() {
 
 	var url string
+	var header []string
 	var requests, concurrency int
 
 	rootCmd.AddCommand(stressTestCmd)
@@ -45,6 +47,7 @@ func init() {
 	stressTestCmd.Flags().StringVarP(&url, "url", "u", "", "URL to be tested")
 	stressTestCmd.Flags().IntVarP(&requests, "requests", "r", 100, "Total number of requests")
 	stressTestCmd.Flags().IntVarP(&concurrency, "concurrency", "c", 10, "Number of concurrent requests")
+	stressTestCmd.Flags().StringSliceVarP(&header, "header", "H", []string{}, "Header to be included in the request")
 
 	stressTestCmd.MarkFlagRequired("url")
 
