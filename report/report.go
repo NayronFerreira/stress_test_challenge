@@ -6,26 +6,17 @@ import (
 	"math"
 	"net/http"
 
-	"github.com/NayronFerreira/stress_test_challenge/loadtester"
+	"github.com/NayronFerreira/stress_test_challenge/models"
 	"github.com/NayronFerreira/stress_test_challenge/report/constants"
 )
 
-type ReportStats struct {
-	TotalRequests      int
-	SuccessCount       int
-	ErrorCount         int
-	MinDuration        float64
-	MaxDuration        float64
-	StatusDistribution map[int]int
-}
-
-func GenerateReport(totalResult loadtester.TotalResult) {
+func GenerateReport(totalResult models.TotalResult) {
 	stats := calculateStats(totalResult)
 	printReport(totalResult.URL, totalResult.TotalDuration, stats)
 }
 
-func calculateStats(totalResult loadtester.TotalResult) ReportStats {
-	stats := ReportStats{
+func calculateStats(totalResult models.TotalResult) models.ReportStats {
+	stats := models.ReportStats{
 		TotalRequests:      len(totalResult.Results),
 		StatusDistribution: make(map[int]int),
 		MinDuration:        math.MaxFloat64,
@@ -57,7 +48,7 @@ func calculateStats(totalResult loadtester.TotalResult) ReportStats {
 	return stats
 }
 
-func printReport(url string, totalDuration float64, stats ReportStats) {
+func printReport(url string, totalDuration float64, stats models.ReportStats) {
 	fmt.Println(constants.StressTestAsciiArt)
 	fmt.Println(constants.ReportHeader)
 	fmt.Printf("URL Testada: %s\n", url)

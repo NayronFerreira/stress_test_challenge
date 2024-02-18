@@ -6,30 +6,17 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/NayronFerreira/stress_test_challenge/models"
+	"github.com/NayronFerreira/stress_test_challenge/report/constants"
 )
 
-const DefaultRequestTimeout = 10 * time.Second
-
-type TotalResult struct {
-	URL           string
-	Results       []Result
-	TotalDuration float64
-}
-
-type Result struct {
-	StatusCode   int
-	Duration     float64
-	Error        bool
-	ErrorMessage string
-}
-
-// RunLoadTest executa um teste de carga na URL fornecida, fazendo o número total de solicitações com a concorrência fornecida.
-func RunLoadTest(url string, totalRequests, concurrency int) TotalResult {
-	results := make([]Result, 0, totalRequests)
-	resultChan := make(chan Result, totalRequests)
+func RunLoadTest(url string, totalRequests, concurrency int) models.TotalResult {
+	results := make([]models.Result, 0, totalRequests)
+	resultChan := make(chan models.Result, totalRequests)
 
 	client := &http.Client{
-		Timeout: DefaultRequestTimeout,
+		Timeout: constants.DefaultRequestTimeout,
 	}
 
 	var wg sync.WaitGroup
@@ -60,25 +47,24 @@ func RunLoadTest(url string, totalRequests, concurrency int) TotalResult {
 		results = append(results, result)
 	}
 
-	return TotalResult{URL: url, Results: results, TotalDuration: float64(totalDuration)}
+	return models.TotalResult{URL: url, Results: results, TotalDuration: float64(totalDuration)}
 }
 
-// performRequest executa uma única solicitação HTTP e retorna o resultado.
-func performRequest(client *http.Client, url string) Result {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultRequestTimeout)
+func performRequest(client *http.Client, url string) models.Result {
+	ctx, cancel := context.WithTimeout(context.Background(), constants.DefaultRequestTimeout)
 	defer cancel()
 
 	startTime := time.Now()
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return Result{Error: true, ErrorMessage: err.Error()}
+		return models.Result{Error: true, ErrorMessage: err.Error()}
 	}
 
 	resp, err := client.Do(req)
 
 	duration := time.Since(startTime).Milliseconds()
 
-	result := Result{
+	result := models.Result{
 		Duration: float64(duration),
 	}
 	if err != nil {
