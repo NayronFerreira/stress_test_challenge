@@ -65,10 +65,10 @@ func performRequest(client *http.Client, url string, headers []string) models.Re
 
 	// Processa cada cabeçalho passado
 	for _, h := range headers {
-		parts := strings.SplitN(h, ":", 2) // Divide a string no primeiro ':' encontrado
+		parts := strings.SplitN(h, ":", 2)
 		if len(parts) == 2 {
-			key := strings.TrimSpace(parts[0])   // Remove espaços em branco ao redor da chave
-			value := strings.TrimSpace(parts[1]) // Remove espaços em branco ao redor do valor
+			key := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
 			req.Header.Set(key, value)
 		}
 	}
