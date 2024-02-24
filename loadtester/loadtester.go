@@ -30,12 +30,12 @@ func RunLoadTest(url string, totalRequests, concurrency int, header []string) mo
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			semaphore <- struct{}{} // Adquire
+			semaphore <- struct{}{} // loock
 
 			result := performRequest(client, url, header)
 			resultChan <- result
 
-			<-semaphore // Libera
+			<-semaphore // unloock
 		}()
 	}
 
@@ -60,10 +60,8 @@ func performRequest(client *http.Client, url string, headers []string) models.Re
 		return models.Result{Error: true, ErrorMessage: err.Error()}
 	}
 
-	// Define um User-Agent padrão
 	req.Header.Set("User-Agent", "stress_test_challenge")
 
-	// Processa cada cabeçalho passado
 	for _, h := range headers {
 		parts := strings.SplitN(h, ":", 2)
 		if len(parts) == 2 {
